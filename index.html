@@ -1,0 +1,437 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>在庫管理機能 仕様メモの機能アイデア (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #f5f1e8; --card: #fffdf8; --ink: #1d1b18; --ink-soft: #4a453d; --muted: #7a7266; --rule: #ddd4c2; --accent: #c8401c; --on-color: #ffffff; --callout-bg: #f3e6dc; --callout-line: #e4c8b4; --error-bg: #f8e3dd; --error-line: #e8b7a8; --code-bg: #fbf8f1; --glow: rgba(200, 64, 28, 0.07); --dot: rgba(29, 27, 24, 0.07); --effort-s: #3f7d4e; --effort-m: #a8740f; --effort-l: #b8361b; --effort-x: #7a7266; --m0: #2f5d8a; --m1: #b23a5b; --m2: #3d7a3a; --m3: #b7791f; --m4: #6a4c93; --m5: #1f7f7a; --m6: #9a4f2a; --m7: #4f6d7a; --m8: #a0446b; --m9: #5b6b2f; --m0-text: #2f5d8a; --m1-text: #b23a5b; --m2-text: #3d7a3a; --m3-text: #b7791f; --m4-text: #6a4c93; --m5-text: #1f7f7a; --m6-text: #9a4f2a; --m7-text: #4f6d7a; --m8-text: #a0446b; --m9-text: #5b6b2f;
+  --head: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #1a1815; --card: #23201c; --ink: #ece6da; --ink-soft: #cfc6b6; --muted: #9d9483; --rule: #3b362f; --accent: #e8734c; --callout-bg: #2f2620; --callout-line: #4d3c30; --error-bg: #3a2320; --error-line: #5f362c; --code-bg: #1e1c19; --glow: rgba(232, 115, 76, 0.08); --dot: rgba(236, 230, 218, 0.06); --m0-text: #8db4dc; --m1-text: #e58aa3; --m2-text: #8fc58b; --m3-text: #e5b66a; --m4-text: #b49ddb; --m5-text: #6fc6c0; --m6-text: #d99a78; --m7-text: #9cb6c2; --m8-text: #da8fb0; --m9-text: #aebd78; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #1a1815; --card: #23201c; --ink: #ece6da; --ink-soft: #cfc6b6; --muted: #9d9483; --rule: #3b362f; --accent: #e8734c; --callout-bg: #2f2620; --callout-line: #4d3c30; --error-bg: #3a2320; --error-line: #5f362c; --code-bg: #1e1c19; --glow: rgba(232, 115, 76, 0.08); --dot: rgba(236, 230, 218, 0.06); --m0-text: #8db4dc; --m1-text: #e58aa3; --m2-text: #8fc58b; --m3-text: #e5b66a; --m4-text: #b49ddb; --m5-text: #6fc6c0; --m6-text: #d99a78; --m7-text: #9cb6c2; --m8-text: #da8fb0; --m9-text: #aebd78; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--body); font-size: 15.5px; line-height: 1.85;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 12% 0%, var(--glow), transparent 42%),
+    radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: auto, 22px 22px;
+}
+a { color: inherit; }
+.page { max-width: 1240px; margin: 0 auto; padding-inline: 16px; }
+.mono { font-family: var(--mono); }
+
+.masthead { padding: 56px 0 36px; border-bottom: 2px solid var(--ink); animation: rise .6s ease-out both; }
+.eyebrow { margin: 0; font-size: 13px; letter-spacing: .18em; color: var(--accent); font-weight: 700; }
+.masthead h1 {
+  margin: 10px 0 14px; font-family: var(--head); font-weight: 900;
+  font-size: clamp(30px, 5.2vw, 54px); line-height: 1.25; letter-spacing: .02em;
+}
+.lead { margin: 0; max-width: 46em; color: var(--ink-soft); }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 28px 0 0; }
+.meta div { border-left: 3px solid var(--ink); padding: 2px 0 2px 12px; }
+.meta dt { font-size: 12px; color: var(--muted); }
+.meta dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.toc {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; margin: 0 -16px; padding: 10px 16px;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+  overflow-x: auto; white-space: nowrap;
+}
+.toc ol { list-style: none; margin: 0; padding: 0; display: inline-flex; }
+.toc li { display: inline-block; margin-right: 6px; }
+.toc a {
+  display: inline-flex; align-items: center; padding: 4px 10px 4px 4px; border-radius: 999px;
+  text-decoration: none; font-size: 13px; background: var(--card); border: 1px solid var(--rule);
+}
+.toc a:hover { border-color: var(--ink); }
+.toc .label { margin-left: 6px; }
+.toc .count { margin-left: 6px; color: var(--muted); font-family: var(--mono); font-size: 12px; }
+.toc .plain { padding-left: 10px; }
+
+.badge {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--c); color: var(--on-color);
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+
+main section { padding: 44px 0 8px; scroll-margin-top: 64px; }
+.section-title { margin: 0 0 6px; font-family: var(--head); font-weight: 900; font-size: 28px; }
+.section-lead { margin: 0 0 22px; color: var(--ink-soft); }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.stat { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 18px; }
+.stat b { display: block; font-family: var(--mono); font-weight: 600; font-size: 40px; line-height: 1.1; }
+.stat b small { font-size: 18px; color: var(--muted); }
+.stat span { font-size: 13px; color: var(--muted); }
+
+.matrix-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--rule); border-radius: 14px; }
+.matrix { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+.matrix th, .matrix td { padding: 9px 10px; border-bottom: 1px solid var(--rule); text-align: center; }
+.matrix tr:last-child td { border-bottom: 0; }
+.matrix th.theme, .matrix td.theme { text-align: left; min-width: 13em; }
+.matrix thead th { font-weight: 500; font-size: 12px; color: var(--muted); vertical-align: bottom; }
+.matrix td.n { font-family: var(--mono); color: var(--muted); }
+.matrix tr.shared td.theme { font-weight: 700; }
+.dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--c); vertical-align: middle; }
+.dot-link { text-decoration: none; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+.model { border-top: 1px solid var(--rule); }
+.model-head { display: flex; gap: 14px; align-items: flex-start; }
+.model-head .badge { width: 44px; height: 44px; font-size: 16px; margin-top: 6px; }
+.dev { margin: 0; font-size: 13px; color: var(--ct); font-weight: 700; letter-spacing: .06em; }
+.model h2 {
+  margin: 0; font-family: var(--head); font-weight: 900; font-size: clamp(22px, 3.4vw, 32px);
+  line-height: 1.3; overflow-wrap: anywhere;
+}
+.facts { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.fact { font-size: 12px; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); color: var(--ink-soft); }
+.remark {
+  margin: 22px 0 0; padding: 4px 0 4px 20px; border-left: 4px solid var(--c);
+  font-family: var(--head); font-weight: 700; font-size: 19px; line-height: 1.7;
+}
+.remark small { display: block; margin-top: 2px; font-family: var(--body); font-weight: 400; font-size: 12px; color: var(--muted); }
+.callout {
+  margin: 18px 0 0; padding: 12px 16px; border-radius: 10px; background: var(--callout-bg);
+  border: 1px solid var(--callout-line); font-size: 14px;
+}
+.callout.error { background: var(--error-bg); border-color: var(--error-line); }
+
+.ideas { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 22px; }
+.idea {
+  position: relative; background: var(--card); border: 1px solid var(--rule); border-radius: 14px;
+  padding: 18px 20px 16px; scroll-margin-top: 70px; animation: rise .5s ease-out both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.idea::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 3px; border-radius: 0 3px 3px 0; background: var(--c); }
+.idea:target { outline: 2px solid var(--c); }
+.idea-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.effort { font-size: 12px; font-weight: 700; color: var(--on-color); padding: 1px 10px; border-radius: 999px; background: var(--effort-x); }
+.effort-s { background: var(--effort-s); } .effort-m { background: var(--effort-m); } .effort-l { background: var(--effort-l); }
+.idea h3 { margin: 6px 0 6px; font-size: 18px; line-height: 1.5; }
+.idea .summary { margin: 0; }
+.idea dl { margin: 12px 0 0; display: grid; grid-template-columns: 1fr; gap: 8px; }
+.idea dt { font-size: 12px; font-weight: 700; color: var(--muted); }
+.idea dd { margin: 0; font-size: 14.5px; color: var(--ink-soft); }
+.tag { display: inline-block; margin-top: 12px; font-size: 12px; color: var(--ct); font-weight: 700; }
+
+.raw { margin: 16px 0 0; }
+.raw summary, .prompt summary { cursor: pointer; font-size: 14px; color: var(--ink-soft); font-weight: 700; }
+pre {
+  margin: 10px 0 0; padding: 16px; max-height: 520px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--code-bg); border: 1px solid var(--rule); border-radius: 10px; font-family: var(--mono); font-size: 13px; line-height: 1.7;
+}
+.settings { width: 100%; min-width: 680px; border-collapse: collapse; font-size: 13.5px; background: var(--card); }
+.settings th, .settings td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: left; white-space: nowrap; }
+.settings td.r { text-align: right; font-family: var(--mono); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; margin-top: 16px; }
+
+footer { margin-top: 56px; padding: 22px 0 48px; border-top: 2px solid var(--ink); font-size: 13px; color: var(--muted); }
+footer p { margin: 4px 0; }
+
+/* 読み込み直後から全部読めるよう、透明からは始めない（位置だけ動かす） */
+@keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } html { scroll-behavior: auto; } }
+
+@media (min-width: 760px) {
+  .ideas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1080px) {
+  .layout { grid-template-columns: 250px minmax(0, 1fr); gap: 44px; }
+  .toc {
+    margin: 0; padding: 32px 0; max-height: 100vh; overflow-y: auto; white-space: normal;
+    background: none; border: 0; align-self: start;
+  }
+  .toc ol { display: block; }
+  .toc li { display: block; margin: 0 0 6px; }
+  .toc a { display: flex; border-radius: 12px; padding: 6px 10px 6px 6px; }
+  .toc .label { flex: 1; overflow-wrap: anywhere; line-height: 1.4; }
+}
+@media print { .toc { display: none; } .layout { display: block; } .idea { break-inside: avoid; } }
+</style>
+<div class="page">
+<header class="masthead">
+<p class="eyebrow">機能追加アイデア ／ モデル別の意見</p>
+<h1>在庫管理機能 仕様メモ</h1>
+<p class="lead">5 つのモデル（開発元 5 社・団体）に「この仕様に追加したら面白くなりそうな機能」を聞き、モデルごとに整理しました。「全体の傾向」の表で、どのモデルがどのテーマの案を出したかを見比べられます。</p>
+<dl class="meta">
+<div><dt>元の仕様書</dt><dd>在庫管理機能_仕様メモ.md</dd></div>
+<div><dt>質問した日</dt><dd class="mono">2026-10-14</dd></div>
+<div><dt>回答したモデル</dt><dd class="mono">5 / 5</dd></div>
+<div><dt>アイデア</dt><dd class="mono">25 件</dd></div>
+</dl>
+</header>
+<div class="layout">
+<nav class="toc" aria-label="目次"><ol><li><a class="plain" href="#overview">全体の傾向</a></li><li><a href="#m-qwen3-30b-a3b-instruct-2507" style="--c:var(--m0);--ct:var(--m0-text)"><span class="badge">01</span><span class="label">Qwen3-30B-A3B-Instruct-2507</span><span class="count">5</span></a></li><li><a href="#m-gpt-oss-20b" style="--c:var(--m1);--ct:var(--m1-text)"><span class="badge">02</span><span class="label">gpt-oss-20b</span><span class="count">5</span></a></li><li><a href="#m-gemma-4-26b-a4b-it" style="--c:var(--m2);--ct:var(--m2-text)"><span class="badge">03</span><span class="label">gemma-4-26B-A4B-it</span><span class="count">5</span></a></li><li><a href="#m-llm-jp-4-1-32b-a3b-thinking" style="--c:var(--m3);--ct:var(--m3-text)"><span class="badge">04</span><span class="label">llm-jp-4.1-32b-a3b-thinking</span><span class="count">5</span></a></li><li><a href="#m-mistral-small-3-2-24b-instruct-2506" style="--c:var(--m4);--ct:var(--m4-text)"><span class="badge">05</span><span class="label">Mistral-Small-3.2-24B-Instruct-2506</span><span class="count">5</span></a></li><li><a class="plain" href="#prompt">質問の内容</a></li></ol></nav>
+<main>
+<section id="overview"><h2 class="section-title">全体の傾向</h2>
+<p class="section-lead">似た案に同じテーマを付けて並べました。● を押すと、そのモデルの案に移ります。</p>
+<div class="stats"><div class="stat"><b>5<small> / 5</small></b><span>回答したモデル</span></div><div class="stat"><b>25</b><span>アイデアの数</span></div><div class="stat"><b>14</b><span>テーマの数</span></div><div class="stat"><b>8</b><span>複数のモデルが挙げたテーマ</span></div></div><div class="matrix-wrap"><table class="matrix"><thead><tr><th class="theme" scope="col">テーマ</th><th scope="col">モデル数</th><th scope="col" title="Qwen3-30B-A3B-Instruct-2507"><span class="badge" style="--c:var(--m0);--ct:var(--m0-text)">01</span></th><th scope="col" title="gpt-oss-20b"><span class="badge" style="--c:var(--m1);--ct:var(--m1-text)">02</span></th><th scope="col" title="gemma-4-26B-A4B-it"><span class="badge" style="--c:var(--m2);--ct:var(--m2-text)">03</span></th><th scope="col" title="llm-jp-4.1-32b-a3b-thinking"><span class="badge" style="--c:var(--m3);--ct:var(--m3-text)">04</span></th><th scope="col" title="Mistral-Small-3.2-24B-Instruct-2506"><span class="badge" style="--c:var(--m4);--ct:var(--m4-text)">05</span></th></tr></thead><tbody><tr class="shared"><td class="theme">在庫推移の可視化</td><td class="n">3</td><td><a class="dot-link" href="#m-qwen3-30b-a3b-instruct-2507-1" style="--c:var(--m0);--ct:var(--m0-text)" title="Qwen3-30B-A3B-Instruct-2507 の案 1"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-gpt-oss-20b-1" style="--c:var(--m1);--ct:var(--m1-text)" title="gpt-oss-20b の案 1"><span class="dot"></span></a></td><td></td><td><a class="dot-link" href="#m-llm-jp-4-1-32b-a3b-thinking-2" style="--c:var(--m3);--ct:var(--m3-text)" title="llm-jp-4.1-32b-a3b-thinking の案 2"><span class="dot"></span></a></td><td></td></tr><tr class="shared"><td class="theme">スマホでスキャン入力</td><td class="n">3</td><td></td><td><a class="dot-link" href="#m-gpt-oss-20b-4" style="--c:var(--m1);--ct:var(--m1-text)" title="gpt-oss-20b の案 4"><span class="dot"></span></a></td><td></td><td><a class="dot-link" href="#m-llm-jp-4-1-32b-a3b-thinking-3" style="--c:var(--m3);--ct:var(--m3-text)" title="llm-jp-4.1-32b-a3b-thinking の案 3"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-mistral-small-3-2-24b-instruct-2506-4" style="--c:var(--m4);--ct:var(--m4-text)" title="Mistral-Small-3.2-24B-Instruct-2506 の案 4"><span class="dot"></span></a></td></tr><tr class="shared"><td class="theme">需要・在庫の予測</td><td class="n">3</td><td></td><td></td><td><a class="dot-link" href="#m-gemma-4-26b-a4b-it-1" style="--c:var(--m2);--ct:var(--m2-text)" title="gemma-4-26B-A4B-it の案 1"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-llm-jp-4-1-32b-a3b-thinking-1" style="--c:var(--m3);--ct:var(--m3-text)" title="llm-jp-4.1-32b-a3b-thinking の案 1"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-mistral-small-3-2-24b-instruct-2506-2" style="--c:var(--m4);--ct:var(--m4-text)" title="Mistral-Small-3.2-24B-Instruct-2506 の案 2"><span class="dot"></span></a></td></tr><tr class="shared"><td class="theme">引当順序の最適化</td><td class="n">2</td><td><a class="dot-link" href="#m-qwen3-30b-a3b-instruct-2507-4" style="--c:var(--m0);--ct:var(--m0-text)" title="Qwen3-30B-A3B-Instruct-2507 の案 4"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-gpt-oss-20b-2" style="--c:var(--m1);--ct:var(--m1-text)" title="gpt-oss-20b の案 2"><span class="dot"></span></a></td><td></td><td></td><td></td></tr><tr class="shared"><td class="theme">在庫差異の原因追跡</td><td class="n">2</td><td><a class="dot-link" href="#m-qwen3-30b-a3b-instruct-2507-5" style="--c:var(--m0);--ct:var(--m0-text)" title="Qwen3-30B-A3B-Instruct-2507 の案 5"><span class="dot"></span></a></td><td></td><td><a class="dot-link" href="#m-gemma-4-26b-a4b-it-4" style="--c:var(--m2);--ct:var(--m2-text)" title="gemma-4-26B-A4B-it の案 4"><span class="dot"></span></a></td><td></td><td></td></tr><tr class="shared"><td class="theme">自動補充の提案</td><td class="n">2</td><td></td><td><a class="dot-link" href="#m-gpt-oss-20b-3" style="--c:var(--m1);--ct:var(--m1-text)" title="gpt-oss-20b の案 3"><span class="dot"></span></a></td><td></td><td></td><td><a class="dot-link" href="#m-mistral-small-3-2-24b-instruct-2506-1" style="--c:var(--m4);--ct:var(--m4-text)" title="Mistral-Small-3.2-24B-Instruct-2506 の案 1"><span class="dot"></span></a></td></tr><tr class="shared"><td class="theme">モール連携への備え</td><td class="n">2</td><td></td><td><a class="dot-link" href="#m-gpt-oss-20b-5" style="--c:var(--m1);--ct:var(--m1-text)" title="gpt-oss-20b の案 5"><span class="dot"></span></a></td><td><a class="dot-link" href="#m-gemma-4-26b-a4b-it-5" style="--c:var(--m2);--ct:var(--m2-text)" title="gemma-4-26B-A4B-it の案 5"><span class="dot"></span></a></td><td></td><td></td></tr><tr class="shared"><td class="theme">倉庫間移動の提案</td><td class="n">2</td><td></td><td></td><td><a class="dot-link" href="#m-gemma-4-26b-a4b-it-3" style="--c:var(--m2);--ct:var(--m2-text)" title="gemma-4-26B-A4B-it の案 3"><span class="dot"></span></a></td><td></td><td><a class="dot-link" href="#m-mistral-small-3-2-24b-instruct-2506-3" style="--c:var(--m4);--ct:var(--m4-text)" title="Mistral-Small-3.2-24B-Instruct-2506 の案 3"><span class="dot"></span></a></td></tr><tr class=""><td class="theme">棚卸のリマインド</td><td class="n">1</td><td><a class="dot-link" href="#m-qwen3-30b-a3b-instruct-2507-2" style="--c:var(--m0);--ct:var(--m0-text)" title="Qwen3-30B-A3B-Instruct-2507 の案 2"><span class="dot"></span></a></td><td></td><td></td><td></td><td></td></tr><tr class=""><td class="theme">ゲーム性・表彰</td><td class="n">1</td><td><a class="dot-link" href="#m-qwen3-30b-a3b-instruct-2507-3" style="--c:var(--m0);--ct:var(--m0-text)" title="Qwen3-30B-A3B-Instruct-2507 の案 3"><span class="dot"></span></a></td><td></td><td></td><td></td><td></td></tr><tr class=""><td class="theme">在庫回転率の分析</td><td class="n">1</td><td></td><td></td><td><a class="dot-link" href="#m-gemma-4-26b-a4b-it-2" style="--c:var(--m2);--ct:var(--m2-text)" title="gemma-4-26B-A4B-it の案 2"><span class="dot"></span></a></td><td></td><td></td></tr><tr class=""><td class="theme">安全在庫の自動算出</td><td class="n">1</td><td></td><td></td><td></td><td><a class="dot-link" href="#m-llm-jp-4-1-32b-a3b-thinking-4" style="--c:var(--m3);--ct:var(--m3-text)" title="llm-jp-4.1-32b-a3b-thinking の案 4"><span class="dot"></span></a></td><td></td></tr><tr class=""><td class="theme">保管コストの試算</td><td class="n">1</td><td></td><td></td><td></td><td><a class="dot-link" href="#m-llm-jp-4-1-32b-a3b-thinking-5" style="--c:var(--m3);--ct:var(--m3-text)" title="llm-jp-4.1-32b-a3b-thinking の案 5"><span class="dot"></span></a></td><td></td></tr><tr class=""><td class="theme">ロット・期限管理</td><td class="n">1</td><td></td><td></td><td></td><td></td><td><a class="dot-link" href="#m-mistral-small-3-2-24b-instruct-2506-5" style="--c:var(--m4);--ct:var(--m4-text)" title="Mistral-Small-3.2-24B-Instruct-2506 の案 5"><span class="dot"></span></a></td></tr></tbody></table></div>
+</section>
+<section class="model" id="m-qwen3-30b-a3b-instruct-2507" style="--c:var(--m0);--ct:var(--m0-text)"><header class="model-head"><span class="badge">01</span><div><p class="dev">Alibaba（Qwen）</p><h2>Qwen3-30B-A3B-Instruct-2507</h2><div class="facts"><span class="fact mono">qwen3-30b-a3b-instruct-2507</span><span class="fact">BF16</span><span class="fact">思考なし</span><span class="fact">回答まで 108 秒</span><span class="fact">1139 トークン</span></div></div></header><blockquote class="remark">実務に即した堅実な基盤がある仕様。利用者の「やる気」や「気づき」を引き出す「遊び心」を加えれば、使いやすさと定着率が飛躍的に上がる。<small>このモデルのひとこと（要約）</small></blockquote><div class="ideas"><article class="idea" id="m-qwen3-30b-a3b-instruct-2507-1" style="--i:1"><div class="idea-top"><span class="num">案 1</span><span class="effort effort-m">実装 中</span></div><h3>在庫の「季節感」可視化機能</h3><p class="summary">あるSKUが過去1年間のどの時期に多く売れたかを、グラフと色分けで可視化し、在庫予測の参考にする。</p><dl><dt>面白い理由</dt><dd>仕入担当が「なぜ今、この商品を仕入れるべきか」を直感的に理解でき、判断の根拠が明確になる。季節商品やイベント対応で特に嬉しい。</dd><dt>仕様との関係</dt><dd>3.1 在庫一覧に「過去1年間の販売推移」を追加表示する。アラートの発生要因の背景情報としても使える。</dd><dt>実装の重さ</dt><dd>中 — 販売履歴の集計とAPI連携が必要。現時点では販売データが外部連携の対象外だが、仮想データで実装できる</dd></dl><span class="tag"># 在庫推移の可視化</span></article><article class="idea" id="m-qwen3-30b-a3b-instruct-2507-2" style="--i:2"><div class="idea-top"><span class="num">案 2</span><span class="effort effort-s">実装 小</span></div><h3>「棚卸のリマインダー」AIアシスタント</h3><p class="summary">棚卸が1か月以上行われていない倉庫に、「もうすぐ棚卸を忘れそう」と自動で通知するAIチャットボットを載せる。</p><dl><dt>面白い理由</dt><dd>棚卸は面倒で忘れがちな作業。AIが「あなた、今週の棚卸まだ？」と声をかけることで業務が続きやすくなり、誤差の原因を未然に防げる。</dd><dt>仕様との関係</dt><dd>3.3 棚卸に「棚卸実施履歴」の記録を加え、AI通知のきっかけにする。通知先は倉庫担当に限る。</dd><dt>実装の重さ</dt><dd>小 — 日付の比較と通知のロジックだけ。既存の通知の仕組みと連携できる</dd></dl><span class="tag"># 棚卸のリマインド</span></article><article class="idea" id="m-qwen3-30b-a3b-instruct-2507-3" style="--i:3"><div class="idea-top"><span class="num">案 3</span><span class="effort effort-s">実装 小</span></div><h3>「在庫のヒーロー」称号機能</h3><p class="summary">在庫管理の精度が高く、棚卸差異が最も小さい倉庫担当者に「在庫のヒーロー」の称号を自動で与え、ダッシュボードに表示する。</p><dl><dt>面白い理由</dt><dd>実用的な業務に「ゲーム性」を持ち込む。達成感や競争心が生まれて業務の質が自然に上がり、チームのモチベーションアップにも効く。</dd><dt>仕様との関係</dt><dd>6. 非機能要件に「操作ログの保持」があるので、差異率の算出と称号付与のルールを加える。</dd><dt>実装の重さ</dt><dd>小 — 称号のルール定義とダッシュボード表示だけ。既存のログを活用できる</dd></dl><span class="tag"># ゲーム性・表彰</span></article><article class="idea" id="m-qwen3-30b-a3b-instruct-2507-4" style="--i:4"><div class="idea-top"><span class="num">案 4</span><span class="effort effort-m">実装 中</span></div><h3>「引当の予測チャート」機能</h3><p class="summary">今後1週間の受注予測をもとに、どの倉庫からどのSKUを引き当てるべきかを「予測チャート」で示す。物流チームが前もって調整しやすくなる。</p><dl><dt>面白い理由</dt><dd>仕入担当や物流チームが「今、どこに在庫を回すべきか」を直感的につかめる。予測が当たれば引当の失敗が減り、出荷遅延も避けられる。</dd><dt>仕様との関係</dt><dd>3.4 アラートに「受注予測データの取得」を加え、引当順序の判断材料にする。</dd><dt>実装の重さ</dt><dd>中 — 予測アルゴリズムの導入と受注データとの連携が必要。ただし過去データからの単純なトレンド予測で実現できる</dd></dl><span class="tag"># 引当順序の最適化</span></article><article class="idea" id="m-qwen3-30b-a3b-instruct-2507-5" style="--i:5"><div class="idea-top"><span class="num">案 5</span><span class="effort effort-m">実装 中</span></div><h3>「在庫の物語」共有機能</h3><p class="summary">SKUの入出庫履歴を、「この商品はどこへ、いつ、なぜ移動したか」の物語風のタイムラインで見せる。共有リンクでほかのチームと共有できる。</p><dl><dt>面白い理由</dt><dd>棚卸の差異や異常な入出庫の原因を追いやすくなり、チーム間のやり取りもスムーズになる。特に異常時の原因究明に強い。</dd><dt>仕様との関係</dt><dd>5. API に「GET /api/inventory/history」を加え、履歴をタイムライン形式で取得できるようにする。</dd><dt>実装の重さ</dt><dd>中 — 履歴の整形とUI表示の開発が必要。既存の操作ログを活用できる</dd></dl><span class="tag"># 在庫差異の原因追跡</span></article></div><details class="raw"><summary>回答の原文を見る</summary><pre>### 案1: 在庫の「季節感」可視化機能  
+- 概要: あるSKUが過去1年間でどの時期に多く売れたかを、グラフと色分けで可視化し、在庫予測の参考にする。  
+- 面白い理由: 仕入担当が「なぜ今、この商品を仕入れるべきか」を直感的に理解できるようになり、判断の根拠が明確になる。特に季節商品やイベント対応で嬉しい。  
+- 仕様との関係: 3.1 在庫一覧に「過去1年間の販売推移」を追加表示する。アラートの発生要因の背景情報として活用可能。  
+- 実装の重さ: 中（販売履歴の集計とAPI連携が必要。現時点では販売データが外部連携対象外だが、仮想データで実装可能）
+
+### 案2: 「棚卸のリマインダー」AIアシスタント  
+- 概要: 棚卸が1ヶ月以上未実施の倉庫に対して、自動で「もうすぐ棚卸忘れそう」と通知するAIチャットボット機能を搭載。  
+- 面白い理由: 棚卸は面倒で忘れがちな作業。AIが「あなた、今週の棚卸まだ？」と声をかけることで、業務の継続性が高まり、誤差の原因を未然に防ぐ。  
+- 仕様との関係: 3.3 棚卸の仕様に「棚卸実施履歴」を記録し、AI通知のトリガーとする。通知先は倉庫担当に限定。  
+- 実装の重さ: 小（日付比較と通知トリガーのロジックのみ。既存の通知システムと連携可能）
+
+### 案3: 「在庫のヒーロー」称号機能  
+- 概要: 在庫管理の精度が高く、棚卸差異が最小の倉庫担当者に「在庫のヒーロー」称号を自動付与し、ダッシュボードに表示。  
+- 面白い理由: 非常に実用的な業務に「ゲーム性」を注入。達成感や競争心が生まれ、業務の質が自然に向上する。チーム内でのモチベーションアップに効果的。  
+- 仕様との関係: 6. 非機能要件に「操作ログの保持」があるため、差異率の算出と称号付与のルールを追加。  
+- 実装の重さ: 小（称号のルール定義とダッシュボード表示のみ。既存のログ活用可能）
+
+### 案4: 「引当の予測チャート」機能  
+- 概要: 今後1週間の受注予測に基づき、どの倉庫からどのSKUを引当すべきかを「予測チャート」で提示。物流チームが事前に調整しやすい。  
+- 面白い理由: 仕入担当や物流チームが「今、どこに在庫を回すべきか」を直感的に把握できる。予測が正しければ、引当の失敗が減り、出荷遅延も回避。  
+- 仕様との関係: 3.4 アラートの仕様に「受注予測データの取得」を追加。引当順序の判断材料として活用。  
+- 実装の重さ: 中（予測アルゴリズムの導入と、受注データとの連携が必要。ただし、過去データからシンプルなトレンド予測で実現可能）
+
+### 案5: 「在庫の物語」共有機能  
+- 概要: あるSKUの入出庫履歴を、タイムライン形式で「この商品はどこへ、いつ、なぜ移動したか」を物語風に可視化。共有リンクで他チームと共有可能。  
+- 面白い理由: 棚卸の差異や、異常な入出庫の原因を追跡しやすくなり、チーム間のコミュニケーションがスムーズになる。特に異常時の原因究明に強力なツールに。  
+- 仕様との関係: 5. APIに「GET /api/inventory/history」を追加し、履歴をタイムライン形式で取得できるようにする。  
+- 実装の重さ: 中（履歴の整形とUI表示の開発が必要。既存の操作ログを活用可能）
+
+---
+
+### ひとこと  
+この仕様は、実務に即した堅実な基盤を備えているが、ユーザーの「やる気」や「気づき」を引き出すような「遊び心」を加えることで、さらに使いやすさと定着率が飛躍的に向上する。</pre></details></section><section class="model" id="m-gpt-oss-20b" style="--c:var(--m1);--ct:var(--m1-text)"><header class="model-head"><span class="badge">02</span><div><p class="dev">OpenAI</p><h2>gpt-oss-20b</h2><div class="facts"><span class="fact mono">gpt-oss-20b</span><span class="fact">MXFP4 を BF16 に展開</span><span class="fact">思考あり（思考は除いて回答だけを使用）</span><span class="fact">回答まで 87 秒</span><span class="fact">1562 トークン</span></div></div></header><blockquote class="remark">「統合」と「自動化」を軸にした、倉庫業務のスピードアップとコスト削減に直結する仕様。追加案は業務の可視化とシミュレーションを中心に、将来の拡張性を見据えた。<small>このモデルのひとこと（要約）</small></blockquote><p class="callout"><b>メモ</b> — 案 5 は、仕様書 7 章の「要検討」（将来のモール連携を見越して API のレスポンス構造を決めておく）にすでに挙がっている事項への具体案です。</p><div class="ideas"><article class="idea" id="m-gpt-oss-20b-1" style="--i:1"><div class="idea-top"><span class="num">案 1</span><span class="effort effort-m">実装 中</span></div><h3>在庫トレンド分析ダッシュボード</h3><p class="summary">過去90日間の入出庫と在庫の変動をグラフにし、SKUごとの季節性やトレンドを可視化する。</p><dl><dt>面白い理由</dt><dd>倉庫担当・仕入担当が「いつ売れやすいか」「いつ補充が必要か」を直感的につかめ、受注シミュレーションにも活かせる。</dd><dt>仕様との関係</dt><dd>在庫一覧（3.1）と棚卸（3.3）のデータを再利用し、在庫の時間軸の分析を加える。</dd><dt>実装の重さ</dt><dd>中 — 既存データを集計し、CSVかAPIで取った情報を時系列チャートに渡すだけ</dd></dl><span class="tag"># 在庫推移の可視化</span></article><article class="idea" id="m-gpt-oss-20b-2" style="--i:2"><div class="idea-top"><span class="num">案 2</span><span class="effort effort-l">実装 大</span></div><h3>受注シミュレーション＆在庫最適化ツール</h3><p class="summary">受注のパターンを入力すると、現在の在庫と安全在庫をもとに「最適な倉庫の組み合わせ・引当順序」を自動で提案する。</p><dl><dt>面白い理由</dt><dd>物流チームが「どう配分すれば欠品リスクを下げられるか」をすぐ検討でき、注文処理の速さと正確さが上がる。</dd><dt>仕様との関係</dt><dd>3.1 在庫一覧に受注データを重ね、引当のロジック（要相談 1）を具体化する。</dd><dt>実装の重さ</dt><dd>大 — シミュレーションのアルゴリズムとUIの結合が必要</dd></dl><span class="tag"># 引当順序の最適化</span></article><article class="idea" id="m-gpt-oss-20b-3" style="--i:3"><div class="idea-top"><span class="num">案 3</span><span class="effort effort-m">実装 中</span></div><h3>自動補充ルール設定とスケジュール</h3><p class="summary">SKUごとに「自動発注の閾値」「リードタイム」「発注量」などを設定し、在庫の減少を定期的に検知して、仕入担当へ発注指示を自動で送る。</p><dl><dt>面白い理由</dt><dd>人手で発注を追いかける負担が減り、欠品・過剰在庫のリスクも下がる。SKUの多いEC事業者には、時間短縮の効果が特に大きい。</dd><dt>仕様との関係</dt><dd>3.4 アラートを広げ、欠品・安全在庫割れをきっかけに自動発注する。</dd><dt>実装の重さ</dt><dd>中 — 既存のアラート機能と連携し、定期実行のジョブを加える</dd></dl><span class="tag"># 自動補充の提案</span></article><article class="idea" id="m-gpt-oss-20b-4" style="--i:4"><div class="idea-top"><span class="num">案 4</span><span class="effort effort-l">実装 大</span></div><h3>バーチャル棚卸ワークフロー</h3><p class="summary">棚卸のときにQRコードやNFCタグを読み取るスマートフォンアプリを作り、棚卸の結果をリアルタイムでシステムに送る。</p><dl><dt>面白い理由</dt><dd>棚卸の作業がテレワーク感覚に近づき、検証時に人手が要らなくなる。遠隔地や海外の倉庫で特に有効。</dd><dt>仕様との関係</dt><dd>3.3 棚卸に「リアルタイム入力」モードを加える。</dd><dt>実装の重さ</dt><dd>大 — モバイルアプリの開発とタグリーダーの統合が必要</dd></dl><span class="tag"># スマホでスキャン入力</span></article><article class="idea" id="m-gpt-oss-20b-5" style="--i:5"><div class="idea-top"><span class="num">案 5</span><span class="effort effort-s">実装 小</span></div><h3>API レスポンス構造の拡張（将来モール連携準備）</h3><p class="summary">レスポンスに「在庫履歴」「SKU備考」「外部チャネルID」などの項目を加え、将来外部モールと連携するためのスキーマを前倒しで作る。</p><dl><dt>面白い理由</dt><dd>初回リリースからモール連携の段階へスムーズに移れ、将来の拡張コストが下がる。</dd><dt>仕様との関係</dt><dd>5. API（GET /api/inventory）を広げ、必要に応じて絞り込みやメタデータを加える。</dd><dt>実装の重さ</dt><dd>小 — 既存のAPIに任意の項目を足すだけ</dd></dl><span class="tag"># モール連携への備え</span></article></div><details class="raw"><summary>回答の原文を見る</summary><pre>### 案1: 在庫トレンド分析ダッシュボード
+- **概要**: 過去 90 日間の入出庫・在庫変動をグラフ化し、SKU ごとの季節性・トレンドを可視化する。  
+- **面白い理由**: 倉庫担当・仕入担当が「いつ売れやすいか」「いつ補充が必要か」を直感的に把握でき、受注シミュレーションに活かせる。  
+- **仕様との関係**: 在庫一覧（3.1）と棚卸（3.3）のデータを再利用し、在庫の時間軸分析機能を追加。  
+- **実装の重さ**: **中**（既存データを集計し、CSV か API で取得した情報を時系列チャートに渡すだけ）。
+
+---
+
+### 案2: 受注シミュレーション＆在庫最適化ツール
+- **概要**: 事前に受注パターンを入力すると、現在の在庫・安全在庫を基に「最適倉庫組合せ・引当順序」を自動提案。  
+- **面白い理由**: 物流チームが「どう配分すれば欠品リスクが低減できるか」をすぐに検討でき、注文処理の速度と正確性が向上。  
+- **仕様との関係**: 3.1（在庫一覧）をベースに受注データを重ね、引当ロジック（要相談 1）を具体化。  
+- **実装の重さ**: **大**（シミュレーションアルゴリズムと UI での結合が必要）。
+
+---
+
+### 案3: 自動補充ルール設定とスケジュール
+- **概要**: SKUごとに「自動発注閾値」「リードタイム」「発注量」などを設定し、定期的に在庫の低下を検知して仕入担当へ発注指示を自動送信。  
+- **面白い理由**: 人手で発注を追いかける負担が減り、欠品・過剰在庫リスクを低減できる。特に多 SKU 商品を扱う EC 事業者にとっては時間短縮効果が大きい。  
+- **仕様との関係**: 3.4（アラート）を拡張し、欠品・安全在庫割れに対して自動発注をトリガー。  
+- **実装の重さ**: **中**（既存アラート機能と連携し、定期実行ジョブを追加する）。
+
+---
+
+### 案4: バーチャル棚卸ワークフロー
+- **概要**: 棚卸時に QR コードや NFC タグを読み取るスマートフォンアプリを作成し、棚卸結果をリアルタイムでシステムへ送信。  
+- **面白い理由**: 棚卸作業がテレワーク感覚に近づき、検証時に人手が必要なくなる。特に遠隔倉庫や海外倉庫で有効。  
+- **仕様との関係**: 3.3（棚卸）を「リアルタイム入力」モードに拡張。  
+- **実装の重さ**: **大**（モバイルアプリ開発＋タグリーダー統合が必要）。
+
+---
+
+### 案5: API レスポンス構造の拡張（将来モール連携準備）
+- **概要**: レスポンスに「在庫履歴」「SKU 備考」「外部チャネルID」などのフィールドを追加し、後日外部モールとデータ連携するためのスキーマを前倒しで構築。  
+- **面白い理由**: 初期リリースからモール連携フェーズへスムーズに移行でき、将来の拡張コストを低減。  
+- **仕様との関係**: 5. API（GET /api/inventory）を拡張し、必要に応じてフィルタリングやメタデータの追加。  
+- **実装の重さ**: **小**（既存 API にオプションフィールドを付け足すだけ）。
+
+---
+
+### ひとこと
+今回の在庫管理機能は「統合」と「自動化」を軸に設計されており、倉庫業務のスピードアップとコスト削減に直結する仕様になっています。追加案は業務プロセスの可視化・シミュレーション機能を中心に、将来の拡張性を見据えた構造設計に注力しました。</pre></details></section><section class="model" id="m-gemma-4-26b-a4b-it" style="--c:var(--m2);--ct:var(--m2-text)"><header class="model-head"><span class="badge">03</span><div><p class="dev">Google</p><h2>gemma-4-26B-A4B-it</h2><div class="facts"><span class="fact mono">gemma-4-26b-a4b-it</span><span class="fact">BF16</span><span class="fact">思考なし</span><span class="fact">回答まで 97 秒</span><span class="fact">878 トークン</span></div></div></header><blockquote class="remark">在庫の「正確な記録」という土台がしっかりしているので、次は「データから次に何をすべきか」を示す機能へ広げると、非常に価値の高いシステムになる。<small>このモデルのひとこと（要約）</small></blockquote><p class="callout"><b>メモ</b> — 案 3 の面白い理由にある「7. 未決事項にある倉庫間移動」は、仕様書と食い違います。倉庫間移動は 3.2 にすでにある機能で、7 章の未決事項は、引当順序・棚卸中の入出庫・API のレスポンス構造です。</p><div class="ideas"><article class="idea" id="m-gemma-4-26b-a4b-it-1" style="--i:1"><div class="idea-top"><span class="num">案 1</span><span class="effort effort-m">実装 中</span></div><h3>需要予測アラート（トレンド検知機能）</h3><p class="summary">過去の入出庫データから「今のペースだと〇日後に欠品する」という予測を出し、通知する。</p><dl><dt>面白い理由</dt><dd>安全在庫を下回ったときには、もう在庫が減り始めている。この機能があれば「まだ在庫はあるが、売れ行きが加速しているので早めに仕入れる」という先手を打てる。</dd><dt>仕様との関係</dt><dd>3.4 アラートの拡張。</dd><dt>実装の重さ</dt><dd>中 — 過去の入出庫履歴を集計するロジックが必要</dd></dl><span class="tag"># 需要・在庫の予測</span></article><article class="idea" id="m-gemma-4-26b-a4b-it-2" style="--i:2"><div class="idea-top"><span class="num">案 2</span><span class="effort effort-s">実装 小</span></div><h3>在庫回転率ダッシュボード</h3><p class="summary">SKUごとに、在庫がどれだけ速く入れ替わっているかを可視化する。</p><dl><dt>面白い理由</dt><dd>仕入担当にとって、在庫数だけでなく「死に筋（動かない在庫）」と「売れ筋（回転の速い在庫）」を見分けられることは、キャッシュフローの改善に極めて重要。</dd><dt>仕様との関係</dt><dd>3.1 在庫一覧の分析的な拡張。</dd><dt>実装の重さ</dt><dd>小 — 一定期間の入出庫数を在庫数で割る計算で実現できる</dd></dl><span class="tag"># 在庫回転率の分析</span></article><article class="idea" id="m-gemma-4-26b-a4b-it-3" style="--i:3"><div class="idea-top"><span class="num">案 3</span><span class="effort effort-m">実装 中</span></div><h3>倉庫間移動の最適化リコメンド</h3><p class="summary">ある倉庫に過剰在庫があり、別の倉庫に欠品リスクがあるときに、倉庫間移動を提案する。</p><dl><dt>面白い理由</dt><dd>7. 未決事項にある「倉庫間移動」を、単なる作業ではなく「在庫の最適配置」という戦略的なアクションに変えられる。</dd><dt>仕様との関係</dt><dd>3.2 入出庫登録（倉庫間移動）の意思決定を支援する。</dd><dt>実装の重さ</dt><dd>中 — 在庫の偏りを検知するロジックが必要</dd></dl><span class="tag"># 倉庫間移動の提案</span></article><article class="idea" id="m-gemma-4-26b-a4b-it-4" style="--i:4"><div class="idea-top"><span class="num">案 4</span><span class="effort effort-s">実装 小</span></div><h3>棚卸差異の「原因分析」タグ付け</h3><p class="summary">3.3 棚卸で差異が出たとき、数値を上書きするだけでなく、「入力ミス」「紛失」「破損」などの理由を選んで記録する。</p><dl><dt>面白い理由</dt><dd>現場のミスか、商品の物理的な破損かを蓄積することで、「なぜ在庫が合わないのか」という根本的なオペレーション改善につなげられる。</dd><dt>仕様との関係</dt><dd>3.3 棚卸と、6. 操作ログの拡張。</dd><dt>実装の重さ</dt><dd>小 — 入力項目の追加と、理由別の集計機能の追加</dd></dl><span class="tag"># 在庫差異の原因追跡</span></article><article class="idea" id="m-gemma-4-26b-a4b-it-5" style="--i:5"><div class="idea-top"><span class="num">案 5</span><span class="effort effort-l">実装 大</span></div><h3>モール連携シミュレーション・モード</h3><p class="summary">将来の外部モール連携を見据え、「外部から大量注文が入ったら、自社在庫がどう引き当てられるか」をAPIを通じてシミュレーションできるようにする。</p><dl><dt>面白い理由</dt><dd>対象外としたモール連携を完全には切り捨てず、設計段階から「連携した場合の挙動」を検証できるようにしておけば、将来のシステム改修コストを劇的に下げられる。</dd><dt>仕様との関係</dt><dd>7. 未決事項（将来のモール連携を見越した設計）への直接の答え。</dd><dt>実装の重さ</dt><dd>大 — シミュレーション用の仮想データの保持や、引当ロジックの分離が必要</dd></dl><span class="tag"># モール連携への備え</span></article></div><details class="raw"><summary>回答の原文を見る</summary><pre>ソフトウェア企画アドバイザーとして、ご提示いただいた仕様書を拝見しました。
+現状の仕様は、在庫管理の「守り（正確な記録と把握）」が非常に堅実につくり込まれています。ここに「攻め（予測と最適化）」の要素を加えることで、単なる記録ツールから、利益を生むための経営判断ツールへと進化させることができます。
+
+以下に、面白さと実用性を兼ね備えた5つの追加機能を提案します。
+
+---
+
+### 案1: 需要予測アラート（トレンド検知機能）
+- 概要: 過去の入出庫データに基づき、「現在のペースだと〇日後に欠品する」という予測を算出・通知する機能。
+- 面白い理由: 「安全在庫を下回った時」は既に在庫が減り始めてからですが、この機能があれば「まだ在庫はあるが、売れ行きが加速しているので早めに仕入れるべき」という先手のアクションが可能になります。
+- 仕様との関係: 3.4 アラート機能の拡張。
+- 実装の重さ: 中（過去の入出庫履歴の集計ロジックが必要）。
+
+### 案2: 在庫回転率ダッシュボード
+- 概要: SKUごとに「どれだけ速いスピードで在庫が入れ替わっているか」を可視化する機能。
+- 面たい理由: 仕入担当にとって、単なる在庫数よりも「死に筋商品（動かない在庫）」と「売れ筋商品（回転が速い在庫）」を判別できることは、キャッシュフロー改善のために極めて重要です。
+- 仕様との関係: 3.1 在庫一覧の分析的拡張。
+- 実装の重さ: 小（一定期間の入出庫数を在庫数で割る計算で実現可能）。
+
+### 案3: 倉庫間移動の最適化リコメンド
+- 概要: 特定の倉庫で過剰在庫があり、別の倉庫で欠品リスクがある場合に、「倉庫間移動」の提案を行う機能。
+- 面白い理由: 7. 未決事項にある「倉庫間移動」を、単なる作業ではなく「在庫の最適配置」という戦略的アクションに変えることができます。
+- 仕様との関係: 3.2 入出庫登録（倉庫間移動）の意思決定支援。
+- 実装の重さ: 中（在庫の偏りを検知するロジックが必要）。
+
+### 案4: 棚卸差異の「原因分析」タグ付け
+- 概要: 3.3 棚卸で差異が発生した際、単に数値を上書きするだけでなく、「入力ミス」「紛失」「破損」などの理由を選択・記録する機能。
+- 面白い理由: 現場のミスなのか、商品の物理的な破損なのかを蓄積することで、将来的に「なぜ在庫が合わないのか」という根本的なオペレーション改善に繋げられます。
+- 仕様との関係: 3.3 棚卸、および6. 操作ログの拡張。
+- 実装の重さ: 小（入力項目の追加と、理由別の集計機能の追加）。
+
+### 案5: モール連携シミュレーション・モード
+- 概要: 将来の外部モール連携を見据え、APIを通じて「もし外部から大量注文が入ったら、自社在庫がどう引当されるか」をシミュレーションできる機能。
+- 面白い理由: 7. 対象外（モール連携）を完全に切り捨てるのではなく、設計段階から「連携された場合の挙動」を検証できる準備をしておくことで、将来のシステム改修コストを劇的に下げられます。
+- 仕様との関係: 7. 未決事項（将来のモール連携を見越した設計）への直接的な回答。
+- 実装の重さ: 大（シミュレーション用の仮想データ保持や、引当ロジックの分離が必要）。
+
+---
+
+### ひとこと
+在庫の「正確な記録」という土台がしっかりしているので、次は「データから次に何をすべきか」を提示する機能へ広げていくと、非常に価値の高いシステムになるでしょう。</pre></details></section><section class="model" id="m-llm-jp-4-1-32b-a3b-thinking" style="--c:var(--m3);--ct:var(--m3-text)"><header class="model-head"><span class="badge">04</span><div><p class="dev">LLM-jp（国立情報学研究所）</p><h2>llm-jp-4.1-32b-a3b-thinking</h2><div class="facts"><span class="fact mono">llm-jp-4.1-32b-a3b-thinking</span><span class="fact">BF16</span><span class="fact">思考あり（思考は除いて回答だけを使用）</span><span class="fact">回答まで 79 秒</span><span class="fact">999 トークン</span></div></div></header><blockquote class="remark">在庫管理の基本機能は充実している。予測・可視化・現場での操作性を加えれば、業務効率と意思決定の質が大幅に上がりそう。<small>このモデルのひとこと（要約）</small></blockquote><p class="callout"><b>メモ</b> — 案 3 は「読み取るだけで登録」としていますが、仕様書 3.2 では、登録時に登録者・日時・理由区分の入力が必須です。案 4 は発注から入荷までのリードタイムの履歴を使いますが、仕様書には発注の記録がありません（記録するのは入庫・出庫・倉庫間移動）。</p><div class="ideas"><article class="idea" id="m-llm-jp-4-1-32b-a3b-thinking-1" style="--i:1"><div class="idea-top"><span class="num">案 1</span><span class="effort effort-m">実装 中</span></div><h3>在庫需要予測アシスタント</h3><p class="summary">過去の受注履歴や季節変動をもとにAIがSKUごとの将来の需要を予測し、推奨の発注量や再注文のタイミングを示す。</p><dl><dt>面白い理由</dt><dd>仕入担当が感覚で判断していた発注をデータに基づいて行えるようになり、欠品リスクと過剰在庫の両方を減らせる。</dd><dt>仕様との関係</dt><dd>在庫一覧・入出庫登録の裏側に需要予測のロジックを加え、API に予測結果のエンドポイントを新設する。</dd><dt>実装の重さ</dt><dd>中 — 需要予測モデルの構築と、既存DBへの集計クエリの追加が必要</dd></dl><span class="tag"># 需要・在庫の予測</span></article><article class="idea" id="m-llm-jp-4-1-32b-a3b-thinking-2" style="--i:2"><div class="idea-top"><span class="num">案 2</span><span class="effort effort-m">実装 中</span></div><h3>リアルタイム在庫可視化ダッシュボード</h3><p class="summary">WebSocketやSSEを使い、倉庫別・SKU別の在庫の推移をグラフやヒートマップですぐに見られる画面を用意する。</p><dl><dt>面白い理由</dt><dd>倉庫担当や物流チームが今の在庫の状態をひと目でつかめ、緊急対応やピッキング計画が速くなる。</dd><dt>仕様との関係</dt><dd>在庫一覧のバックエンドにリアルタイム更新用のイベントストリームを加え、UIに可視化の部品を足す。</dd><dt>実装の重さ</dt><dd>中 — リアルタイム通信の基盤とUIの部品の実装が必要</dd></dl><span class="tag"># 在庫推移の可視化</span></article><article class="idea" id="m-llm-jp-4-1-32b-a3b-thinking-3" style="--i:3"><div class="idea-top"><span class="num">案 3</span><span class="effort effort-s">実装 小</span></div><h3>モバイル端末向けバーコード／QRコード入出庫スキャン</h3><p class="summary">スマホやタブレットのカメラでSKUのバーコードやQRコードを読み取るだけで、入庫・出庫・倉庫間移動をその場で登録できる。</p><dl><dt>面白い理由</dt><dd>手書き入力の手間が省け、現場の作業が速く正確になる。特に倉庫スタッフにとって便利。</dd><dt>仕様との関係</dt><dd>入出庫登録の画面にスキャン入力欄を加え、API に画像解析用のメタデータ（SKUと数量）を送る流れを新設する。</dd><dt>実装の重さ</dt><dd>小 — フロントエンドにスキャン用のライブラリを組み込み、サーバー側はパラメータを受け取るだけ</dd></dl><span class="tag"># スマホでスキャン入力</span></article><article class="idea" id="m-llm-jp-4-1-32b-a3b-thinking-4" style="--i:4"><div class="idea-top"><span class="num">案 4</span><span class="effort effort-l">実装 大</span></div><h3>自動安全在庫調整機能（リードタイム変動考慮）</h3><p class="summary">発注から入荷までのリードタイムの履歴を分析し、安全在庫数を統計的に自動で算出・更新する。</p><dl><dt>面白い理由</dt><dd>安全在庫を手で設定する手間が省け、需要の変動や供給の遅れに柔軟に対応できる。</dd><dt>仕様との関係</dt><dd>「安全在庫割れ」アラートの条件を動的に変えられるようにし、安全在庫を定期的に再計算するジョブをバックエンドに加える。</dd><dt>実装の重さ</dt><dd>大 — 統計分析のロジックと定期バッチ処理の設計が必要</dd></dl><span class="tag"># 安全在庫の自動算出</span></article><article class="idea" id="m-llm-jp-4-1-32b-a3b-thinking-5" style="--i:5"><div class="idea-top"><span class="num">案 5</span><span class="effort effort-s">実装 小</span></div><h3>在庫保管コスト試算ツール</h3><p class="summary">倉庫ごとの保管単価やスペースの利用率を入力すると、SKUごとの年間保管コストを自動で算出し、過剰在庫を減らす判断を支援する。</p><dl><dt>面白い理由</dt><dd>経営層が在庫最適化のROIを数字でつかめ、仕入れ戦略や倉庫配置の改善につながる。</dd><dt>仕様との関係</dt><dd>在庫一覧にコスト試算ボタンを加え、倉庫別の単価情報から計算結果を返す API のエンドポイントを新設する。</dd><dt>実装の重さ</dt><dd>小 — 単価テーブルの追加と簡単な計算ロジックの実装</dd></dl><span class="tag"># 保管コストの試算</span></article></div><details class="raw"><summary>回答の原文を見る</summary><pre>案1: 在庫需要予測アシスタント  
+- 概要: 過去の受注履歴や季節変動を元に AI が各 SKU の将来需要を予測し、推奨発注量や再注文タイミングを提示する。  
+- 面白い理由: 仕入担当が感覚的に判断していた発注をデータドリブンにでき、欠品リスクと過剰在庫の双方を削減できる。  
+- 仕様との関係: 「在庫一覧」「入出庫登録」の背後に需要予測ロジックを追加し、API に予測結果エンドポイントを新設することで拡張できる。  
+- 実装の重さ: 中（需要予測モデルの構築と既存 DB への集計クエリ追加が必要）。
+
+案2: リアルタイム在庫可視化ダッシュボード  
+- 概要: WebSocket または SSE を使い、倉庫別・SKU 別の在庫推移をグラフやヒートマップで即時に閲覧できる画面を提供する。  
+- 面白い理由: 倉庫担当や物流チームが現在の在庫状態を一目で把握でき、緊急対応やピッキング計画が迅速になる。  
+- 仕様との関係: 「在庫一覧」画面のバックエンドにリアルタイム更新用のイベントストリームを加え、UI に可視化コンポーネントを追加する形で拡張できる。  
+- 実装の重さ: 中（リアルタイム通信基盤と UI コンポーネントの実装が必要）。
+
+案3: モバイル端末向けバーコード／QRコード入出庫スキャン  
+- 概要: スマホやタブレットのカメラで SKU のバーコードまたは QR コードを読み取るだけで、入庫・出庫・倉庫間移動を即時登録できる。  
+- 面白い理由: 手書き入力の手間が省け、現場での作業速度と正確性が向上する。特に倉庫スタッフの利便性が高まる。  
+- 仕様との関係: 「入出庫登録」画面にスキャン入力欄を追加し、API に画像解析用のメタデータ（SKU と数量）を送信するフローを新設する。  
+- 実装の重さ: 小（フロントエンドにスキャンライブラリを組み込み、サーバー側はパラメータ受取のみ）。
+
+案4: 自動安全在庫調整機能（リードタイム変動考慮）  
+- 概要: 発注から入荷までのリードタイムの履歴を分析し、統計的に安全在庫数を自動算出・更新する。  
+- 面白い理由: 手動で安全在庫を設定する手間が省け、需要変動や供給遅延に対して柔軟に対応できる。  
+- 仕様との関係: 「安全在庫割れ」アラートの条件式を動的に変更できるようにし、バックエンドで定期的に安全在庫を再計算するジョブを追加する。  
+- 実装の重さ: 大（統計分析ロジックと定期バッチ処理の設計が必要）。
+
+案5: 在庫保管コスト試算ツール  
+- 概要: 各倉庫の保管単価やスペース利用率を入力すると、SKU ごとの年間保管コストを自動算出し、過剰在庫削減の意思決定を支援する。  
+- 面白い理由: 経営層が在庫最適化の ROI を数値で把握でき、仕入れ戦略や倉庫配置の改善につながる。  
+- 仕様との関係: 「在庫一覧」画面にコスト試算ボタンを追加し、API で倉庫別単価情報を取得して計算結果を返すエンドポイントを新設する。  
+- 実装の重さ: 小（単価テーブルの追加と簡易計算ロジックの実装）。
+
+ひとこと  
+在庫管理の基本機能は充実していますが、予測・可視化・現場操作性を加えることで、業務効率と意思決定の質が大幅に向上しそうです。</pre></details></section><section class="model" id="m-mistral-small-3-2-24b-instruct-2506" style="--c:var(--m4);--ct:var(--m4-text)"><header class="model-head"><span class="badge">05</span><div><p class="dev">Mistral AI</p><h2>Mistral-Small-3.2-24B-Instruct-2506</h2><div class="facts"><span class="fact mono">mistral-small-3.2-24b-instruct-2506</span><span class="fact">BF16</span><span class="fact">思考なし</span><span class="fact">回答まで 54 秒</span><span class="fact">918 トークン</span></div></div></header><blockquote class="remark">在庫管理の基本機能はしっかり整っているが、データ活用や作業効率化の余地が大きい。特に未決事項を解決する機能や、将来の拡張性を考えた提案が効果的だと感じた。<small>このモデルのひとこと（要約）</small></blockquote><p class="callout"><b>メモ</b> — 案 3・案 5 の「6. 要検討」は、仕様書では 7 章の「要検討」（API のレスポンス構造）です。案 4 は 7 章の要相談 2（棚卸中に入出庫を登録できるようにするか）を解決するとしていますが、どう解決するかは書かれていません。案 5 のロット管理は、仕様書の「SKU が在庫管理上の最小単位」という前提を変えます。</p><div class="ideas"><article class="idea" id="m-mistral-small-3-2-24b-instruct-2506-1" style="--i:1"><div class="idea-top"><span class="num">案 1</span><span class="effort effort-m">実装 中</span></div><h3>自動補充提案機能</h3><p class="summary">安全在庫を下回ったSKUについて、仕入担当に補充の提案（推奨の仕入数・納期の目安）を自動で表示する。</p><dl><dt>面白い理由</dt><dd>仕入担当の判断の負担が減り、欠品リスクをさらに下げられる。季節商品や人気商品で特に効果的。</dd><dt>仕様との関係</dt><dd>3.4 アラートを広げ、単なる通知から「行動の提案」へ進化させる。</dd><dt>実装の重さ</dt><dd>中 — 在庫データと過去の仕入履歴を分析する必要がある</dd></dl><span class="tag"># 自動補充の提案</span></article><article class="idea" id="m-mistral-small-3-2-24b-instruct-2506-2" style="--i:2"><div class="idea-top"><span class="num">案 2</span><span class="effort effort-l">実装 大</span></div><h3>在庫予測ダッシュボード</h3><p class="summary">過去の売上データをもとに、SKUごとの在庫不足・過剰の予測日をグラフで示す。</p><dl><dt>面白い理由</dt><dd>在庫を調整するタイミングが前もって分かり、倉庫担当の作業効率が上がる。</dd><dt>仕様との関係</dt><dd>3.1 在庫一覧の拡張。6. 非機能要件の「1万件対応」を活かす。</dd><dt>実装の重さ</dt><dd>大 — データ分析のアルゴリズムの開発が必要</dd></dl><span class="tag"># 需要・在庫の予測</span></article><article class="idea" id="m-mistral-small-3-2-24b-instruct-2506-3" style="--i:3"><div class="idea-top"><span class="num">案 3</span><span class="effort effort-m">実装 中</span></div><h3>移動効率最適化提案</h3><p class="summary">複数の倉庫の間で在庫を移動するとき、物流コストと納期を考えた最適なルートを提案する。</p><dl><dt>面白い理由</dt><dd>7. 未決事項の「引当順序」の問題に対応できる。物流チームの負担も減る。</dd><dt>仕様との関係</dt><dd>3.2 入出庫登録の拡張。API のレスポンス構造（6. 要検討）に影響する。</dd><dt>実装の重さ</dt><dd>中 — 倉庫間の物流コストのデータが必要</dd></dl><span class="tag"># 倉庫間移動の提案</span></article><article class="idea" id="m-mistral-small-3-2-24b-instruct-2506-4" style="--i:4"><div class="idea-top"><span class="num">案 4</span><span class="effort effort-l">実装 大</span></div><h3>棚卸作業支援AR機能</h3><p class="summary">スマートフォンのカメラで棚卸の対象商品を撮影すると、SKUコードを自動で認識し、入力を助ける。</p><dl><dt>面白い理由</dt><dd>7. 未決事項の「棚卸中の入出庫登録」の問題を解決する。作業ミスも減らせる。</dd><dt>仕様との関係</dt><dd>3.3 棚卸の拡張。新しい画面遷移が必要（4. 画面遷移）。</dd><dt>実装の重さ</dt><dd>大 — 画像認識技術の導入が必要</dd></dl><span class="tag"># スマホでスキャン入力</span></article><article class="idea" id="m-mistral-small-3-2-24b-instruct-2506-5" style="--i:5"><div class="idea-top"><span class="num">案 5</span><span class="effort effort-m">実装 中</span></div><h3>在庫ロット管理機能</h3><p class="summary">入庫時にロット番号を登録し、有効期限や製造ロットごとに在庫を追跡できる。</p><dl><dt>面白い理由</dt><dd>食品や化粧品など、ロット管理が必要な商品に対応できる。品質管理の強化につながる。</dd><dt>仕様との関係</dt><dd>3.2 入出庫登録の拡張。API のレスポンス構造に影響する（6. 要検討）。</dd><dt>実装の重さ</dt><dd>中 — データモデルの変更が必要</dd></dl><span class="tag"># ロット・期限管理</span></article></div><details class="raw"><summary>回答の原文を見る</summary><pre>### 案1: 自動補充提案機能
+- **概要**: 安全在庫を下回ったSKUに対して、仕入担当に自動で補充提案（推奨仕入数・納期目安）を表示する。
+- **面白い理由**: 仕入担当の判断負担を軽減し、欠品リスクをさらに低減できる。特に季節商品や人気商品で効果的。
+- **仕様との関係**: 3.4 アラート機能を拡張し、単なる通知から「行動提案」に進化させる。
+- **実装の重さ**: 中（在庫データと過去の仕入履歴を分析する必要がある）
+
+### 案2: 在庫予測ダッシュボード
+- **概要**: 過去の売上データを基に、各SKUの在庫不足/過剰予測日をグラフで表示する。
+- **面白い理由**: 事前に在庫調整のタイミングを把握でき、倉庫担当の作業効率が向上する。
+- **仕様との関係**: 3.1 在庫一覧の拡張。6. 非機能要件の「1万件対応」を活かす。
+- **実装の重さ**: 大（データ分析アルゴリズムの開発が必要）
+
+### 案3: 移動効率最適化提案
+- **概要**: 複数倉庫間で在庫を移動する際、物流コストと納期を考慮した最適ルートを提案する。
+- **面白い理由**: 7. 未決事項の「引当順序」問題に対応可能。物流チームの負担軽減につながる。
+- **仕様との関係**: 3.2 入出庫登録の拡張。APIのレスポンス構造（6. 要検討）に影響。
+- **実装の重さ**: 中（倉庫間の物流コストデータが必要）
+
+### 案4: 棚卸作業支援AR機能
+- **概要**: スマートフォンカメラで棚卸対象商品を撮影すると、SKUコードを自動認識し、入力をサポートする。
+- **面白い理由**: 7. 未決事項の「棚卸中の入出庫登録」問題を解決。作業ミスを減らせる。
+- **仕様との関係**: 3.3 棚卸機能の拡張。新しい画面遷移が必要（4. 画面遷移）。
+- **実装の重さ**: 大（画像認識技術の導入が必要）
+
+### 案5: 在庫ロット管理機能
+- **概要**: 入庫時にロット番号を登録し、有効期限や製造ロットごとの在庫を追跡できる。
+- **面白い理由**: 食品や化粧品など、ロット管理が必要な商品に対応可能。品質管理の強化につながる。
+- **仕様との関係**: 3.2 入出庫登録の拡張。APIのレスポンス構造に影響（6. 要検討）。
+- **実装の重さ**: 中（データモデルの変更が必要）
+
+### ひとこと
+在庫管理の基本機能はしっかり整っていますが、データ活用や作業効率化の余地が大きい印象です。特に「未決事項」を解決する機能や、将来の拡張性を考慮した提案が効果的だと感じました。</pre></details></section>
+<section id="prompt"><h2 class="section-title">質問の内容</h2><p class="section-lead">すべてのモデルに、同じ 1 つのメッセージを送りました。仕様書は、モデルの入力の上限に収まるよう要約しています。</p><details class="prompt"><summary>モデルに送ったメッセージ（1,689 文字）</summary><pre>あなたは、ソフトウェアの企画に詳しいアドバイザーです。
+次の仕様書（要約）を読んで、「この仕様に追加したら面白くなりそうな機能」を 5 つ提案してください。
+
+## 条件
+- 仕様書にまだ書かれていない機能を提案する（すでにある機能の言い換えは避ける）
+- 利用者にとって嬉しく、実現できそうなもの。意外性のある案も歓迎する
+- 日本語で書く
+- 次の形式を守る（案ごとに同じ見出しと項目）
+
+### 案1: （機能名）
+- 概要: 何ができるようになるか（1〜2 文）
+- 面白い理由: 誰にとって、なぜ嬉しいか
+- 仕様との関係: 仕様書のどの部分を広げるか
+- 実装の重さ: 小・中・大 のどれか（理由をひとこと）
+
+（案2〜案5 も同じ形式）
+
+### ひとこと
+この仕様全体についての感想を 1〜2 文で。
+
+## 仕様書（要約）
+題名: 在庫管理機能 仕様メモ（レビュー前のドラフト。第7章の未決事項が残っている）
+
+### 1. 概要（目的・背景・利用者）
+- EC事業の拡大にともない、現在スプレッドシートで運用している在庫管理を、専用機能としてシステムに組み込む。
+- 目的: 複数倉庫の在庫を一元管理し、欠品と過剰在庫の両方を減らす。
+- 利用者: 明記なし。登場する担当者は、倉庫担当・仕入担当（アラートの通知先）と、物流チーム（引当順序の相談先）。
+
+### 2. 用語
+- SKU: 在庫管理上の最小単位。色・サイズ違いは別SKUとして扱う。
+- 引当: 受注に対して在庫を確保すること。
+- 安全在庫: 欠品を防ぐために最低限保持する在庫数。
+- 棚卸: 実地在庫とシステム在庫を照合する作業。
+
+### 3. 機能要件（この仕様にすでにある機能）
+#### 3.1 在庫一覧
+- SKU単位で、倉庫ごとの在庫数・引当数・引当可能数を表示する。
+- 安全在庫を下回ったSKUは、行を強調表示する。
+- SKUコード・商品名・倉庫で絞り込みできる。
+
+#### 3.2 入出庫登録
+- 入庫・出庫・倉庫間移動の3種類を登録できる。
+- 登録時に、登録者・日時・理由区分を必須入力とする。
+- 登録した入出庫はあとから取り消せず、訂正は逆仕訳で行う。
+
+#### 3.3 棚卸
+- 倉庫を指定して棚卸を開始し、実地在庫数を入力する。
+- システム在庫との差異を一覧表示し、確定すると在庫数を上書きする。
+
+#### 3.4 アラート
+- 欠品警告: 引当可能数が 0 以下になると、倉庫担当・仕入担当に通知する。
+- 安全在庫割れ: 在庫数が安全在庫を下回ると、仕入担当に通知する。
+- 過剰在庫: 在庫数が適正在庫上限を上回ると、仕入担当に通知する。
+
+### 4. 画面遷移
+- 在庫一覧 → SKU詳細 → 入出庫登録、の順で遷移する。
+- 棚卸は、在庫一覧の「棚卸」ボタンから、独立した画面で行う。
+
+### 5. API（いずれも認証必須。レスポンスは JSON 形式）
+- GET /api/inventory: 在庫一覧の取得（倉庫・SKUでフィルタ可）
+- POST /api/inventory/movements: 入出庫の登録
+- POST /api/inventory/stocktaking: 棚卸結果の確定
+
+### 6. 非機能要件（制約）
+- 在庫一覧は、SKU 1万件でも 2 秒以内に表示する。
+- 入出庫登録は、同時実行時の在庫数不整合を防ぐ（排他制御）。
+- 操作ログは 1 年間保持する。
+
+### 7. 未決事項・対象外
+- 要相談 1: 複数倉庫の引当順序を「倉庫の優先度順」とするか「受注者に近い倉庫順」とするか未定。物流チームと要相談。
+- 要相談 2: 棚卸中に入出庫を登録できるようにするか。締めて運用する案と、並行を許す案がある。
+- 対象外: 外部の販売チャネル（モール）との在庫連携は、本リリースの対象外。
+- 要検討: 将来のモール連携を見越して、API のレスポンス構造を決めておきたい。
+</pre></details><div class="table-wrap"><table class="settings"><thead><tr><th></th><th>モデル</th><th>回答の上限</th><th>ロード</th><th>回答まで</th><th>入力トークン</th><th>出力トークン</th></tr></thead><tbody><tr><td><span class="badge" style="--c:var(--m0);--ct:var(--m0-text)">01</span></td><td class="mono">qwen3-30b-a3b-instruct-2507</td><td class="r">2048</td><td class="r">59.0 秒</td><td class="r">107.8 秒</td><td class="r">1285</td><td class="r">1139</td></tr><tr><td><span class="badge" style="--c:var(--m1);--ct:var(--m1-text)">02</span></td><td class="mono">gpt-oss-20b</td><td class="r">4096</td><td class="r">26.6 秒</td><td class="r">87.2 秒</td><td class="r">1322</td><td class="r">1562</td></tr><tr><td><span class="badge" style="--c:var(--m2);--ct:var(--m2-text)">03</span></td><td class="mono">gemma-4-26b-a4b-it</td><td class="r">2048</td><td class="r">44.6 秒</td><td class="r">96.8 秒</td><td class="r">1057</td><td class="r">878</td></tr><tr><td><span class="badge" style="--c:var(--m3);--ct:var(--m3-text)">04</span></td><td class="mono">llm-jp-4.1-32b-a3b-thinking</td><td class="r">4096</td><td class="r">43.1 秒</td><td class="r">79.0 秒</td><td class="r">1036</td><td class="r">999</td></tr><tr><td><span class="badge" style="--c:var(--m4);--ct:var(--m4-text)">05</span></td><td class="mono">mistral-small-3.2-24b-instruct-2506</td><td class="r">2048</td><td class="r">48.3 秒</td><td class="r">54.1 秒</td><td class="r">1347</td><td class="r">918</td></tr></tbody></table></div></section>
+</main>
+</div>
+<footer>
+<p>各モデルの回答は、Google Colab の GPU で動かしたオープンなモデル（ローカル LLM API 経由）の出力です。内容の正しさや、実現できるかは確かめていません。</p>
+<p>アイデアのカード・ひとこと・テーマは、回答の原文を Claude が読みやすく整理したものです（案を足したり削ったりはしていません）。原文は各モデルの「回答の原文を見る」で確認できます。</p>
+</footer>
+</div>
+
+</body></html>
